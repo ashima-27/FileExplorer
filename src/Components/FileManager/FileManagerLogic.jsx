@@ -41,7 +41,7 @@ const useFileManagerLogic = () => {
                 setShowFileInput(false);
                 setShowFolderInput(false);
                 if (editItemPath !== null) {
-                    saveEditedName(); // Dependency: saveEditedName
+                    saveEditedName(); // Include saveEditedName as a dependency
                 }
             }
         };
@@ -49,7 +49,7 @@ const useFileManagerLogic = () => {
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
         };
-    }, [showFileInput, showFolderInput, editItemPath]); // Only include direct dependencies
+    }, [showFileInput, showFolderInput, editItemPath, saveEditedName]); // Include saveEditedName in the dependency array
 
     useEffect(() => {
         localStorage.setItem('folders', JSON.stringify(folders));
