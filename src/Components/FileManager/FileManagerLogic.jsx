@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import initialFolders from './constants';
 
 const useFileManagerLogic = () => {
@@ -32,6 +32,20 @@ const useFileManagerLogic = () => {
     const fileContainerRef = useRef(null);
     const folderContainerRef = useRef(null);
 
+    const saveEditedName = useCallback(() => {
+        if (editItemPath !== null) {
+            const path = editItemPath.split('-').map(Number);
+            const newFolderStructure = [...folders];
+            const itemToEdit = findFolderByPath(newFolderStructure, path);
+            itemToEdit.name = editedItemName;
+            setFolders(newFolderStructure);
+            setEditItemPath(null);
+        }
+        if (selectedFolderPath === editItemPath) {
+            setSelectedItemName(editedItemName);
+        }
+    }, [editItemPath, folders, editedItemName, selectedFolderPath]);
+
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (
@@ -41,7 +55,7 @@ const useFileManagerLogic = () => {
                 setShowFileInput(false);
                 setShowFolderInput(false);
                 if (editItemPath !== null) {
-                    saveEditedName(); // Include saveEditedName as a dependency
+                    saveEditedName();
                 }
             }
         };
@@ -49,7 +63,7 @@ const useFileManagerLogic = () => {
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
         };
-    }, [showFileInput, showFolderInput, editItemPath, saveEditedName]); // Include saveEditedName in the dependency array
+    }, [showFileInput, showFolderInput, editItemPath, saveEditedName]);
 
     useEffect(() => {
         localStorage.setItem('folders', JSON.stringify(folders));
@@ -156,20 +170,6 @@ const useFileManagerLogic = () => {
 
     const handleEditNameChange = (e) => {
         setEditedItemName(e.target.value);
-    };
-
-    const saveEditedName = () => {
-        if (editItemPath !== null) {
-            const path = editItemPath.split('-').map(Number);
-            const newFolderStructure = [...folders];
-            const itemToEdit = findFolderByPath(newFolderStructure, path);
-            itemToEdit.name = editedItemName;
-            setFolders(newFolderStructure);
-            setEditItemPath(null);
-        }
-        if (selectedFolderPath === editItemPath) {
-            setSelectedItemName(editedItemName);
-        }
     };
 
     return {
