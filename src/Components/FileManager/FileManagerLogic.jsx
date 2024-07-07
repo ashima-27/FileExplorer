@@ -41,7 +41,7 @@ const useFileManagerLogic = () => {
                 setShowFileInput(false);
                 setShowFolderInput(false);
                 if (editItemPath !== null) {
-                    saveEditedName();
+                    saveEditedName(); // Dependency: saveEditedName
                 }
             }
         };
@@ -49,7 +49,7 @@ const useFileManagerLogic = () => {
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
         };
-    }, [showFileInput, showFolderInput, editItemPath]);
+    }, [showFileInput, showFolderInput, editItemPath]); // Only include direct dependencies
 
     useEffect(() => {
         localStorage.setItem('folders', JSON.stringify(folders));
